@@ -22,5 +22,16 @@ Given(/^I add parameter "([^"]*)" with value "([^"]*)" to the URL$/) do |key, va
 end
 
 Then(/^I should( not)? see parameter "([^"]*)" with value "([^"]*)"$/) do |negative, key, value|
-  pending
+  uri_with_params= page.current_url.split('?')
+  
+  params_string= uri_with_params.length == 2 ? uri_with_params[1] 
+                                      : nil
+                                     
+  params= params_string != nil ? Hash[*string.split('&').collect{|i|i.split('=')}.flatten]
+                               : nil
+             
+  if params != nill                  
+    negative ? expect(params(key)).to be false 
+             : expect(query_parameter_has(key)).to be true && expect(query_parameter_value(key)).to eq(value)
+  end
 end
