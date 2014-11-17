@@ -15,3 +15,12 @@ Then /^I should see the following filters:$/ do |table|
     step %{I should see a #{type} filter for "#{label}"}
   end
 end
+
+Given(/^I add parameter "([^"]*)" with value "([^"]*)" to the URL$/) do |key, value|
+  separator= page.current_url.include?('?') ? '&' : '?'
+  visit page.current_url + separator + key.to_s + '=' + value.to_s
+end
+
+Then(/^I should( not)? see parameter "([^"]*)" with value "([^"]*)"$/) do |negative, key, value|
+  pending
+end
