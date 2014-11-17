@@ -1,3 +1,5 @@
+require 'cgi'
+
 Then /^I should see a select filter for "([^"]*)"$/ do |label|
   expect(page).to have_css '.filter_select label', text: label
 end
@@ -22,16 +24,15 @@ Given(/^I add parameter "([^"]*)" with value "([^"]*)" to the URL$/) do |key, va
 end
 
 Then(/^I should( not)? see parameter "([^"]*)" with value "([^"]*)"$/) do |negative, key, value|
-  uri_with_params= page.current_url.split('?')
-  
-  params_string= uri_with_params.length == 2 ? uri_with_params[1] 
-                                      : nil
-                                     
-  params= params_string != nil ? Hash[*string.split('&').collect{|i|i.split('=')}.flatten]
-                               : nil
-             
-  if params != nill                  
-    negative ? expect(params(key)).to be false 
-             : expect(query_parameter_has(key)).to be true && expect(query_parameter_value(key)).to eq(value)
-  end
+ uri_with_params= page.current_url.split('?')
+ params_string= (uri_with_params.length == 2) ? uri_with_params[1]: nil
+ expect(params_string).to_not be_nil
+ params= Hash.new
+ params_string.split('&').each do |pair|
+   params[pair.split('=')[0]]= pair.split('=')[1]
+ end
+ if params != nil
+  negative ? (expect(params[key]).to be_falsey)
+           : (expect(params[key]).to be_truthy) && (expect(params[key]).to eq(value))
+ end
 end
